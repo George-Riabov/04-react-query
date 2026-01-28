@@ -1,33 +1,31 @@
 import axios from "axios";
-import type { Movie } from "../types/movie";
+import type { SearchMoviesResponse } from "../types/movie";
 
-interface SearchMoviesResponse {
-  results: Movie[];
-}
-
-const myApiKey = axios.create({
+const tmdbApi = axios.create({
   baseURL: "https://api.themoviedb.org/3",
 });
 
-export default async function fetchMovies(query: string): Promise<Movie[]> {
+export async function fetchMovies(
+  query: string,
+  page: number,
+): Promise<SearchMoviesResponse> {
   const token = import.meta.env.VITE_TMDB_TOKEN;
+
   if (!token) {
-    throw new Error(
-      "VITE_TMDB_TOKEN is missing. Check your .env and restart dev server.",
-    );
+    throw new Error("VITE_TMDB_TOKEN is missing");
   }
 
-  const { data } = await myApiKey.get<SearchMoviesResponse>("/search/movie", {
+  const { data } = await tmdbApi.get<SearchMoviesResponse>("/search/movie", {
     params: {
       query,
+      page,
       include_adult: false,
       language: "en-US",
-      page: 1,
     },
     headers: {
       Authorization: `Bearer ${token}`,
     },
   });
 
-  return data.results;
+  return data;
 }
