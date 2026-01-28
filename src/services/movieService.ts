@@ -1,5 +1,10 @@
 import axios from "axios";
-import type { SearchMoviesResponse } from "../types/movie";
+import type { Movie } from "../types/movie";
+
+export interface SearchMoviesResponse {
+  results: Movie[];
+  total_pages: number;
+}
 
 const tmdbApi = axios.create({
   baseURL: "https://api.themoviedb.org/3",
